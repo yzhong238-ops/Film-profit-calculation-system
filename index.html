@@ -3,27 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电影投资利润计算器 - 最终版</title>
+    <title>利润计算系统 - 电影与演唱会投资分析</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #7c5cc4;
-            --primary-light: #9c8ac9;
-            --secondary-color: #5c4b9e;
-            --bg-color: #f9f5ff;
-            --card-bg: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --border-color: #e1d4ff;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --highlight-color: #f0e9ff;
-            --highlight-bg: #7c5cc4;
-            --highlight-text: #ffffff;
-            --client-profit-color: #dc3545;
-            --single-client-profit-color: #8b0000;
+            /* 电影主题（紫色） */
+            --primary-color-movie: #7c5cc4;
+            --primary-light-movie: #9c8ac9;
+            --secondary-color-movie: #5c4b9e;
+            --bg-color-movie: #f9f5ff;
+            --card-bg-movie: #ffffff;
+            --text-primary-movie: #333333;
+            --text-secondary-movie: #666666;
+            --border-color-movie: #e1d4ff;
+            --highlight-color-movie: #f0e9ff;
+            --highlight-bg-movie: #7c5cc4;
+            --highlight-text-movie: #ffffff;
+            --client-profit-color-movie: #dc3545;
+            --single-client-profit-color-movie: #8b0000;
+            
+            /* 演唱会主题（绿色） */
+            --primary-color-concert: #28a745;
+            --primary-light-concert: #5cb85c;
+            --secondary-color-concert: #449d44;
+            --bg-color-concert: #f5f9f5;
+            --card-bg-concert: #ffffff;
+            --text-primary-concert: #333333;
+            --text-secondary-concert: #666666;
+            --border-color-concert: #d4e8d4;
+            --highlight-color-concert: #eaf7ea;
+            --highlight-bg-concert: #28a745;
+            --highlight-text-concert: #ffffff;
+            --client-profit-color-concert: #dc3545;
+            --single-client-profit-color-concert: #8b0000;
+            
+            /* 默认使用电影主题变量 */
+            --primary-color: var(--primary-color-movie);
+            --primary-light: var(--primary-light-movie);
+            --secondary-color: var(--secondary-color-movie);
+            --bg-color: var(--bg-color-movie);
+            --card-bg: var(--card-bg-movie);
+            --text-primary: var(--text-primary-movie);
+            --text-secondary: var(--text-secondary-movie);
+            --border-color: var(--border-color-movie);
+            --highlight-color: var(--highlight-color-movie);
+            --highlight-bg: var(--highlight-bg-movie);
+            --highlight-text: var(--highlight-text-movie);
+            --client-profit-color: var(--client-profit-color-movie);
+            --single-client-profit-color: var(--single-client-profit-color-movie);
+        }
+        
+        body.theme-concert {
+            --primary-color: var(--primary-color-concert);
+            --primary-light: var(--primary-light-concert);
+            --secondary-color: var(--secondary-color-concert);
+            --bg-color: var(--bg-color-concert);
+            --card-bg: var(--card-bg-concert);
+            --text-primary: var(--text-primary-concert);
+            --text-secondary: var(--text-secondary-concert);
+            --border-color: var(--border-color-concert);
+            --highlight-color: var(--highlight-color-concert);
+            --highlight-bg: var(--highlight-bg-concert);
+            --highlight-text: var(--highlight-text-concert);
+            --client-profit-color: var(--client-profit-color-concert);
+            --single-client-profit-color: var(--single-client-profit-color-concert);
         }
         
         * {
@@ -39,6 +83,7 @@
             line-height: 1.5;
             min-height: 100vh;
             padding: 15px;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         .container {
@@ -52,7 +97,7 @@
             margin-bottom: 20px;
             background-color: var(--card-bg);
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(124, 91, 196, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             position: relative;
         }
         
@@ -73,12 +118,79 @@
             color: var(--text-secondary);
         }
         
+        .system-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .system-option {
+            width: 140px;
+            height: 140px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+        
+        .system-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .system-option.active {
+            border-color: var(--primary-color);
+            background-color: var(--highlight-color);
+        }
+        
+        .system-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .system-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
         .calculator-card {
             background-color: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(124, 91, 196, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
+            display: none;
+        }
+        
+        .calculator-card.active {
+            display: block;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+        
+        .back-button i {
+            margin-right: 5px;
         }
         
         .section-title {
@@ -100,6 +212,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
+            color: var(--primary-color);
         }
         
         .input-grid {
@@ -131,7 +244,7 @@
         
         .input-with-unit:focus-within {
             border-color: var(--primary-light);
-            box-shadow: 0 0 0 2px rgba(124, 91, 196, 0.2);
+            box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
         }
         
         input {
@@ -140,7 +253,7 @@
             border: none;
             font-size: 1rem;
             color: var(--text-primary);
-            background-color: #fbf9ff;
+            background-color: var(--highlight-color);
         }
         
         input:focus {
@@ -225,7 +338,7 @@
         }
         
         .unit-option:hover {
-            background-color: #e9e1ff;
+            background-color: var(--highlight-color);
         }
         
         .unit-option.active {
@@ -258,7 +371,7 @@
         .calculate-btn {
             background-color: var(--primary-color);
             color: white;
-            box-shadow: 0 3px 8px rgba(124, 91, 196, 0.3);
+            box-shadow: 0 3px 8px rgba(var(--primary-color-rgb), 0.3);
         }
         
         .calculate-btn:hover {
@@ -272,16 +385,16 @@
         }
         
         .reset-btn:hover {
-            background-color: #e1d4ff;
+            background-color: var(--border-color);
         }
         
         .example-btn {
-            background-color: var(--success-color);
+            background-color: var(--info-color, #17a2b8);
             color: white;
         }
         
         .example-btn:hover {
-            background-color: #218838;
+            background-color: var(--info-color-dark, #138496);
             transform: translateY(-2px);
         }
         
@@ -289,7 +402,6 @@
             margin-right: 6px;
         }
         
-        /* 紧凑的结果展示区域 - 所有数据在一个栏目里 */
         .results-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -305,7 +417,7 @@
         }
         
         .result-item {
-            background-color: #fbf9ff;
+            background-color: var(--highlight-color);
             border-radius: 8px;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -321,12 +433,12 @@
         
         .result-item.warning {
             background-color: #fff9e6;
-            border-color: var(--warning-color);
+            border-color: var(--warning-color, #ffc107);
         }
         
         .result-item.info {
             background-color: #e8f4f8;
-            border-color: var(--info-color);
+            border-color: var(--info-color, #17a2b8);
         }
         
         .result-item.client-profit {
@@ -399,7 +511,6 @@
             border-top-color: rgba(255, 255, 255, 0.3);
         }
         
-        /* 关键数据突出显示区域 */
         .key-highlight {
             background-color: var(--highlight-color);
             border-radius: 8px;
@@ -431,7 +542,7 @@
             flex: 1;
             min-width: 120px;
             padding: 8px;
-            background-color: white;
+            background-color: var(--card-bg);
             border-radius: 6px;
             border: 1px solid var(--border-color);
         }
@@ -470,13 +581,12 @@
             margin-left: 3px;
         }
         
-        /* 图表区域 */
         .chart-container {
             margin-top: 20px;
             background-color: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(124, 91, 196, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
         .chart-title {
@@ -496,6 +606,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
+            color: var(--primary-color);
         }
         
         .chart-wrapper {
@@ -572,6 +683,19 @@
                 font-size: 1.5rem;
             }
             
+            .system-selector {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .system-option {
+                width: 100%;
+                max-width: 220px;
+                height: auto;
+                padding: 15px;
+            }
+            
             .input-grid {
                 grid-template-columns: 1fr;
             }
@@ -615,20 +739,40 @@
         }
     </style>
 </head>
-<body>
+<body class="theme-movie">
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-film"></i>
+                <i class="fas fa-calculator"></i>
             </div>
-            <h1>电影投资利润计算器</h1>
-            <p class="subtitle">输入电影数据，快速计算投资回报</p>
+            <h1>利润计算系统</h1>
+            <p class="subtitle">电影与演唱会投资回报分析工具</p>
         </header>
         
-        <div class="calculator-card">
+        <div class="system-selector">
+            <div class="system-option active" data-system="movie">
+                <div class="system-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="system-name">电影投资</div>
+            </div>
+            <div class="system-option" data-system="concert">
+                <div class="system-icon">
+                    <i class="fas fa-guitar"></i>
+                </div>
+                <div class="system-name">演唱会投资</div>
+            </div>
+        </div>
+        
+        <!-- 电影计算器 -->
+        <div class="calculator-card active" id="movie-calculator">
+            <button class="back-button" onclick="showSystemSelector()">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            
             <div class="section-title">
                 <i class="fas fa-chart-line"></i>
-                <span>输入电影数据</span>
+                <span>电影投资数据</span>
             </div>
             
             <div class="input-grid">
@@ -674,7 +818,7 @@
             
             <div class="tax-rate-group">
                 <div class="tax-rate-label">客户所得税率：</div>
-                <input type="number" id="tax-rate" class="tax-rate-input" value="6" min="0" max="100" step="0.1">
+                <input type="number" id="movie-tax-rate" class="tax-rate-input" value="6" min="0" max="100" step="0.1">
                 <div class="tax-rate-percent">%</div>
             </div>
             
@@ -686,26 +830,19 @@
             </div>
             
             <div class="buttons">
-                <button class="calculate-btn" id="calculate-btn">
+                <button class="calculate-btn" id="movie-calculate-btn">
                     <i class="fas fa-calculator"></i> 计算利润
                 </button>
-                <button class="reset-btn" id="reset-btn">
+                <button class="reset-btn" id="movie-reset-btn">
                     <i class="fas fa-redo"></i> 重置数据
                 </button>
-                <button class="example-btn" id="example-btn">
+                <button class="example-btn" id="movie-example-btn">
                     <i class="fas fa-vial"></i> 示例数据
                 </button>
             </div>
-        </div>
-        
-        <div class="calculator-card">
-            <div class="section-title">
-                <i class="fas fa-chart-bar"></i>
-                <span>计算结果</span>
-            </div>
             
             <div class="results-container">
-                <div class="results-grid" id="results-grid">
+                <div class="results-grid" id="movie-results-grid">
                     <!-- 结果将动态生成在这里 -->
                 </div>
                 
@@ -717,36 +854,173 @@
                     <div class="key-stats">
                         <div class="key-stat">
                             <div class="key-stat-label">客户分成比例</div>
-                            <div class="key-stat-value" id="key-client-ratio">--<span class="key-stat-unit">%</span></div>
+                            <div class="key-stat-value" id="movie-key-client-ratio">--<span class="key-stat-unit">%</span></div>
                         </div>
                         <div class="key-stat client-profit">
                             <div class="key-stat-label">所有客户净利润</div>
-                            <div class="key-stat-value" id="key-client-profit">--<span class="key-stat-unit">元</span></div>
+                            <div class="key-stat-value" id="movie-key-client-profit">--<span class="key-stat-unit">元</span></div>
                         </div>
                         <div class="key-stat single-client-profit">
                             <div class="key-stat-label">单个客户净利润</div>
-                            <div class="key-stat-value" id="key-single-client-profit">--<span class="key-stat-unit">元</span></div>
+                            <div class="key-stat-value" id="movie-key-single-client-profit">--<span class="key-stat-unit">元</span></div>
                         </div>
                         <div class="key-stat">
                             <div class="key-stat-label">投资回报率</div>
-                            <div class="key-stat-value" id="key-roi">--<span class="key-stat-unit">%</span></div>
+                            <div class="key-stat-value" id="movie-key-roi">--<span class="key-stat-unit">%</span></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>利润分配比例</span>
+                </div>
+                <div class="chart-wrapper">
+                    <div class="profit-chart">
+                        <canvas id="movie-profitChart"></canvas>
+                    </div>
+                    <div class="chart-legend" id="movie-chart-legend">
+                        <!-- 图例将通过JavaScript动态生成 -->
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="chart-container">
-            <div class="chart-title">
-                <i class="fas fa-chart-pie"></i>
-                <span>利润分配比例</span>
+        <!-- 演唱会计算器 -->
+        <div class="calculator-card" id="concert-calculator">
+            <button class="back-button" onclick="showSystemSelector()">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            
+            <div class="section-title">
+                <i class="fas fa-music"></i>
+                <span>演唱会投资数据</span>
             </div>
-            <div class="chart-wrapper">
-                <div class="profit-chart">
-                    <canvas id="profitChart"></canvas>
+            
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="ticket-quantity">售票数量</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="ticket-quantity" placeholder="例如：50000" min="0" step="1">
+                        <select class="unit-select" id="ticket-unit">
+                            <option value="1">张</option>
+                            <option value="1000">千张</option>
+                            <option value="10000">万张</option>
+                        </select>
+                    </div>
+                    <div class="input-note">售出的门票总数</div>
                 </div>
-                <div class="chart-legend" id="chart-legend">
-                    <!-- 图例将通过JavaScript动态生成 -->
+                
+                <div class="input-group">
+                    <label for="ticket-price">平均票价</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="ticket-price" placeholder="例如：500" min="0" step="0.01">
+                        <select class="unit-select" id="price-unit">
+                            <option value="1">元</option>
+                            <option value="10">十元</option>
+                            <option value="100">百元</option>
+                        </select>
+                    </div>
+                    <div class="input-note">每张门票的平均价格</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="concert-cost">演唱会总成本</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="concert-cost" placeholder="例如：8000" min="0" step="0.01">
+                        <select class="unit-select" id="concert-cost-unit">
+                            <option value="1">元</option>
+                            <option value="10000" selected>万</option>
+                            <option value="100000000">亿</option>
+                        </select>
+                    </div>
+                    <div class="input-note">场地、艺人、宣传等总成本</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="concert-investment">单个客户投资额</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="concert-investment" placeholder="例如：50" min="0" step="0.01">
+                        <select class="unit-select" id="concert-investment-unit">
+                            <option value="1">元</option>
+                            <option value="10000" selected>万</option>
+                            <option value="100000000">亿</option>
+                        </select>
+                    </div>
+                    <div class="input-note">单个客户投资金额</div>
+                </div>
+            </div>
+            
+            <div class="tax-rate-group">
+                <div class="tax-rate-label">客户所得税率：</div>
+                <input type="number" id="concert-tax-rate" class="tax-rate-input" value="6" min="0" max="100" step="0.1">
+                <div class="tax-rate-percent">%</div>
+            </div>
+            
+            <div class="unit-display-selector">
+                <div class="unit-display-label">结果显示单位：</div>
+                <div class="unit-option active" data-unit="1">元</div>
+                <div class="unit-option" data-unit="10000">万</div>
+                <div class="unit-option" data-unit="100000000">亿</div>
+            </div>
+            
+            <div class="buttons">
+                <button class="calculate-btn" id="concert-calculate-btn">
+                    <i class="fas fa-calculator"></i> 计算利润
+                </button>
+                <button class="reset-btn" id="concert-reset-btn">
+                    <i class="fas fa-redo"></i> 重置数据
+                </button>
+                <button class="example-btn" id="concert-example-btn">
+                    <i class="fas fa-vial"></i> 示例数据
+                </button>
+            </div>
+            
+            <div class="results-container">
+                <div class="results-grid" id="concert-results-grid">
+                    <!-- 结果将动态生成在这里 -->
+                </div>
+                
+                <div class="key-highlight">
+                    <div class="key-highlight-title">
+                        <i class="fas fa-star"></i>
+                        <span>核心客户回报数据</span>
+                    </div>
+                    <div class="key-stats">
+                        <div class="key-stat">
+                            <div class="key-stat-label">客户分成比例</div>
+                            <div class="key-stat-value" id="concert-key-client-ratio">--<span class="key-stat-unit">%</span></div>
+                        </div>
+                        <div class="key-stat client-profit">
+                            <div class="key-stat-label">所有客户净利润</div>
+                            <div class="key-stat-value" id="concert-key-client-profit">--<span class="key-stat-unit">元</span></div>
+                        </div>
+                        <div class="key-stat single-client-profit">
+                            <div class="key-stat-label">单个客户净利润</div>
+                            <div class="key-stat-value" id="concert-key-single-client-profit">--<span class="key-stat-unit">元</span></div>
+                        </div>
+                        <div class="key-stat">
+                            <div class="key-stat-label">投资回报率</div>
+                            <div class="key-stat-value" id="concert-key-roi">--<span class="key-stat-unit">%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>利润分配比例</span>
+                </div>
+                <div class="chart-wrapper">
+                    <div class="profit-chart">
+                        <canvas id="concert-profitChart"></canvas>
+                    </div>
+                    <div class="chart-legend" id="concert-chart-legend">
+                        <!-- 图例将通过JavaScript动态生成 -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -757,47 +1031,64 @@
     </div>
 
     <script>
+        // 设置RGB变量用于阴影
+        document.documentElement.style.setProperty('--primary-color-rgb', 
+            getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim().match(/\d+/g).join(', '));
+        
         document.addEventListener('DOMContentLoaded', function() {
             // 获取DOM元素
-            const dividableBoxOfficeInput = document.getElementById('dividable-box-office');
-            const movieCostInput = document.getElementById('movie-cost');
-            const clientInvestmentInput = document.getElementById('client-investment');
-            const taxRateInput = document.getElementById('tax-rate');
-            const calculateBtn = document.getElementById('calculate-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const exampleBtn = document.getElementById('example-btn');
-            const resultsGrid = document.getElementById('results-grid');
-            
-            // 单位选择元素
-            const dividableUnitSelect = document.getElementById('dividable-unit');
-            const costUnitSelect = document.getElementById('cost-unit');
-            const investmentUnitSelect = document.getElementById('investment-unit');
-            
-            // 显示单位选择
-            const unitOptions = document.querySelectorAll('.unit-option');
-            
-            // 关键数据元素
-            const keyClientRatioEl = document.getElementById('key-client-ratio');
-            const keyClientProfitEl = document.getElementById('key-client-profit');
-            const keySingleClientProfitEl = document.getElementById('key-single-client-profit');
-            const keyRoiEl = document.getElementById('key-roi');
-            
-            // 图表元素
-            let profitChart = null;
-            
-            // 当前显示单位
-            let currentDisplayUnit = 1;
-            let currentDisplayUnitText = '元';
+            const systemOptions = document.querySelectorAll('.system-option');
+            const calculatorCards = document.querySelectorAll('.calculator-card');
+            const body = document.body;
             
             // 设置页脚版权信息
             function setCopyrightText() {
                 const currentYear = new Date().getFullYear();
                 const copyrightElement = document.getElementById('copyright-text');
-                copyrightElement.textContent = `© ${currentYear} 无双影业 | 电影投资利润计算器 | 数据仅供参考`;
+                copyrightElement.textContent = `© ${currentYear} 无双影业 | 利润计算系统 | 数据仅供参考`;
             }
             
-            // 初始化结果网格
-            function initializeResults() {
+            // 显示系统选择器
+            window.showSystemSelector = function() {
+                document.querySelector('.system-selector').style.display = 'flex';
+                calculatorCards.forEach(card => card.classList.remove('active'));
+            };
+            
+            // 系统选择事件
+            systemOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const system = this.dataset.system;
+                    
+                    // 更新UI
+                    systemOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 隐藏系统选择器
+                    document.querySelector('.system-selector').style.display = 'none';
+                    
+                    // 显示对应的计算器
+                    calculatorCards.forEach(card => card.classList.remove('active'));
+                    document.getElementById(`${system}-calculator`).classList.add('active');
+                    
+                    // 设置主题
+                    if (system === 'concert') {
+                        body.className = 'theme-concert';
+                    } else {
+                        body.className = 'theme-movie';
+                    }
+                    
+                    // 初始化结果网格
+                    if (system === 'movie') {
+                        initializeMovieResults();
+                    } else {
+                        initializeConcertResults();
+                    }
+                });
+            });
+            
+            // 初始化电影计算器结果网格
+            function initializeMovieResults() {
+                const resultsGrid = document.getElementById('movie-results-grid');
                 resultsGrid.innerHTML = `
                     <div class="result-item">
                         <div class="result-title"><i class="fas fa-industry"></i> 制片方利润</div>
@@ -849,41 +1140,86 @@
                 `;
                 
                 // 重置关键数据
-                keyClientRatioEl.textContent = '--';
-                keyClientProfitEl.textContent = '--';
-                keySingleClientProfitEl.textContent = '--';
-                keyRoiEl.textContent = '--';
+                document.getElementById('movie-key-client-ratio').textContent = '--';
+                document.getElementById('movie-key-client-profit').textContent = '--';
+                document.getElementById('movie-key-single-client-profit').textContent = '--';
+                document.getElementById('movie-key-roi').textContent = '--';
                 
-                // 重置图表
-                if (profitChart) {
-                    profitChart.destroy();
+                // 初始化图表
+                initMovieChart();
+            }
+            
+            // 初始化演唱会计算器结果网格
+            function initializeConcertResults() {
+                const resultsGrid = document.getElementById('concert-results-grid');
+                resultsGrid.innerHTML = `
+                    <div class="result-item">
+                        <div class="result-title"><i class="fas fa-ticket-alt"></i> 总票房收入</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">售票数量 × 平均票价</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-title"><i class="fas fa-chart-pie"></i> 总利润</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">总票房收入 - 演唱会总成本</div>
+                    </div>
+                    
+                    <div class="result-item client-profit">
+                        <div class="result-title"><i class="fas fa-users"></i> 客户分配利润</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">总利润 × 80%</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-title"><i class="fas fa-building"></i> 公司分配利润</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">总利润 × 20%</div>
+                    </div>
+                    
+                    <div class="result-item highlight">
+                        <div class="result-title"><i class="fas fa-percentage"></i> 客户分成比例</div>
+                        <div class="result-value">--<span class="result-unit">%</span></div>
+                        <div class="result-formula">客户分配利润 ÷ 演唱会总成本</div>
+                    </div>
+                    
+                    <div class="result-item single-client-profit">
+                        <div class="result-title"><i class="fas fa-hand-holding-usd"></i> 单个客户税前所得</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">客户投资额 × 分成比例</div>
+                    </div>
+                    
+                    <div class="result-item info">
+                        <div class="result-title"><i class="fas fa-file-invoice-dollar"></i> 单个客户税后所得</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">客户税前所得 × (1 - 税率)</div>
+                    </div>
+                    
+                    <div class="result-item warning">
+                        <div class="result-title"><i class="fas fa-balance-scale"></i> 回本所需票房</div>
+                        <div class="result-value">--<span class="result-unit">元</span></div>
+                        <div class="result-formula">演唱会总成本 ÷ 上座率</div>
+                    </div>
+                `;
+                
+                // 重置关键数据
+                document.getElementById('concert-key-client-ratio').textContent = '--';
+                document.getElementById('concert-key-client-profit').textContent = '--';
+                document.getElementById('concert-key-single-client-profit').textContent = '--';
+                document.getElementById('concert-key-roi').textContent = '--';
+                
+                // 初始化图表
+                initConcertChart();
+            }
+            
+            // 初始化电影图表
+            function initMovieChart() {
+                const ctx = document.getElementById('movie-profitChart').getContext('2d');
+                if (window.movieProfitChart) {
+                    window.movieProfitChart.destroy();
                 }
-                initializeChart();
-            }
-            
-            // 设置显示单位
-            function setDisplayUnit(unitValue, unitText) {
-                currentDisplayUnit = unitValue;
-                currentDisplayUnitText = unitText;
                 
-                // 更新单位选项的活跃状态
-                unitOptions.forEach(option => {
-                    if (parseInt(option.dataset.unit) === unitValue) {
-                        option.classList.add('active');
-                    } else {
-                        option.classList.remove('active');
-                    }
-                });
-                
-                // 重新计算并显示结果
-                calculateProfit();
-            }
-            
-            // 初始化图表
-            function initializeChart() {
-                const ctx = document.getElementById('profitChart').getContext('2d');
-                
-                profitChart = new Chart(ctx, {
+                window.movieProfitChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: ['制片方利润', '电影总成本', '公司分配利润', '所有客户净利润', '单个客户净利润'],
@@ -913,7 +1249,7 @@
                                         const value = context.raw || 0;
                                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                        return `${label}: ${formatNumber(value)} (${percentage}%)`;
+                                        return `${label}: ${formatNumber(value, 1)} (${percentage}%)`;
                                     }
                                 }
                             }
@@ -922,12 +1258,61 @@
                 });
                 
                 // 初始化图例
-                updateChartLegend([0, 0, 0, 0, 0]);
+                updateMovieChartLegend([0, 0, 0, 0, 0]);
             }
             
-            // 更新图例
-            function updateChartLegend(data) {
-                const legendContainer = document.getElementById('chart-legend');
+            // 初始化演唱会图表
+            function initConcertChart() {
+                const ctx = document.getElementById('concert-profitChart').getContext('2d');
+                if (window.concertProfitChart) {
+                    window.concertProfitChart.destroy();
+                }
+                
+                window.concertProfitChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['总票房收入', '演唱会总成本', '公司分配利润', '所有客户净利润', '单个客户净利润'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#28a745',
+                                '#449d44',
+                                '#5cb85c',
+                                '#dc3545',
+                                '#8b0000'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return `${label}: ${formatNumber(value, 1)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // 初始化图例
+                updateConcertChartLegend([0, 0, 0, 0, 0]);
+            }
+            
+            // 更新电影图表图例
+            function updateMovieChartLegend(data) {
+                const legendContainer = document.getElementById('movie-chart-legend');
                 const labels = ['制片方利润', '电影总成本', '公司分配利润', '所有客户净利润', '单个客户净利润'];
                 const colors = ['#7c5cc4', '#5c4b9e', '#9c8ac9', '#dc3545', '#8b0000'];
                 
@@ -942,7 +1327,32 @@
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: ${colors[index]};"></div>
                             <div class="legend-label">${label}</div>
-                            <div class="legend-value">${formatNumber(value)}</div>
+                            <div class="legend-value">${formatNumber(value, 1)}</div>
+                        </div>
+                    `;
+                });
+                
+                legendContainer.innerHTML = legendHTML;
+            }
+            
+            // 更新演唱会图表图例
+            function updateConcertChartLegend(data) {
+                const legendContainer = document.getElementById('concert-chart-legend');
+                const labels = ['总票房收入', '演唱会总成本', '公司分配利润', '所有客户净利润', '单个客户净利润'];
+                const colors = ['#28a745', '#449d44', '#5cb85c', '#dc3545', '#8b0000'];
+                
+                let legendHTML = '';
+                const total = data.reduce((a, b) => a + b, 0);
+                
+                labels.forEach((label, index) => {
+                    const value = data[index];
+                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                    
+                    legendHTML += `
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: ${colors[index]};"></div>
+                            <div class="legend-label">${label}</div>
+                            <div class="legend-value">${formatNumber(value, 1)}</div>
                         </div>
                     `;
                 });
@@ -951,18 +1361,18 @@
             }
             
             // 格式化数字
-            function formatNumber(num) {
+            function formatNumber(num, unitFactor = 1) {
                 if (num === 0 || isNaN(num)) return '0';
                 
-                const displayNum = num / currentDisplayUnit;
+                const displayNum = num / unitFactor;
                 
-                if (currentDisplayUnit === 1) {
+                if (unitFactor === 1) {
                     // 元：添加千位分隔符
                     return displayNum.toLocaleString('zh-CN', {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     });
-                } else if (currentDisplayUnit === 10000) {
+                } else if (unitFactor === 10000) {
                     // 万：保留2位小数
                     return displayNum.toLocaleString('zh-CN', {
                         minimumFractionDigits: 2,
@@ -977,78 +1387,22 @@
                 }
             }
             
-            // 格式化百分比
-            function formatPercent(num) {
-                return (num * 100).toFixed(2) + '%';
-            }
+            // 电影计算逻辑
+            document.getElementById('movie-calculate-btn').addEventListener('click', function() {
+                calculateMovieProfit();
+            });
             
-            // 更新结果显示
-            function updateResults(calculations) {
-                const { 
-                    producerProfitYuan, netProfitYuan, clientProfitYuan,
-                    companyProfitYuan, clientRatio, clientFinalYuan,
-                    clientAfterTaxYuan, breakEvenBoxOfficeYuan, roi,
-                    singleClientProfitYuan
-                } = calculations;
-                
-                // 更新结果项
-                const resultItems = resultsGrid.querySelectorAll('.result-item');
-                
-                resultItems[0].querySelector('.result-value').innerHTML = `${formatNumber(producerProfitYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[1].querySelector('.result-value').innerHTML = `${formatNumber(netProfitYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[2].querySelector('.result-value').innerHTML = `${formatNumber(clientProfitYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[3].querySelector('.result-value').innerHTML = `${formatNumber(companyProfitYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[4].querySelector('.result-value').innerHTML = `${(clientRatio * 100).toFixed(2)}<span class="result-unit">%</span>`;
-                resultItems[5].querySelector('.result-value').innerHTML = `${formatNumber(clientFinalYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[6].querySelector('.result-value').innerHTML = `${formatNumber(clientAfterTaxYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                resultItems[7].querySelector('.result-value').innerHTML = `${formatNumber(breakEvenBoxOfficeYuan)}<span class="result-unit">${currentDisplayUnitText}</span>`;
-                
-                // 更新关键数据
-                keyClientRatioEl.innerHTML = `${(clientRatio * 100).toFixed(2)}<span class="key-stat-unit">%</span>`;
-                keyClientProfitEl.innerHTML = `${formatNumber(clientProfitYuan)}<span class="key-stat-unit">${currentDisplayUnitText}</span>`;
-                keySingleClientProfitEl.innerHTML = `${formatNumber(singleClientProfitYuan)}<span class="key-stat-unit">${currentDisplayUnitText}</span>`;
-                keyRoiEl.innerHTML = `${roi.toFixed(2)}<span class="key-stat-unit">%</span>`;
-                
-                // 更新图表
-                updateChart(producerProfitYuan, calculations.movieCostYuan, companyProfitYuan, clientProfitYuan, singleClientProfitYuan);
-            }
-            
-            // 更新图表
-            function updateChart(producerProfitYuan, movieCostYuan, companyProfitYuan, clientProfitYuan, singleClientProfitYuan) {
-                // 更新图表数据
-                profitChart.data.datasets[0].data = [
-                    producerProfitYuan,
-                    movieCostYuan,
-                    companyProfitYuan,
-                    clientProfitYuan,
-                    singleClientProfitYuan
-                ];
-                
-                // 更新图表
-                profitChart.update();
-                
-                // 更新图例
-                updateChartLegend([
-                    producerProfitYuan,
-                    movieCostYuan,
-                    companyProfitYuan,
-                    clientProfitYuan,
-                    singleClientProfitYuan
-                ]);
-            }
-            
-            // 计算函数
-            function calculateProfit() {
+            function calculateMovieProfit() {
                 // 获取输入值
-                const dividableBoxOffice = parseFloat(dividableBoxOfficeInput.value) || 0;
-                const movieCost = parseFloat(movieCostInput.value) || 0;
-                const clientInvestment = parseFloat(clientInvestmentInput.value) || 0;
-                const taxRate = parseFloat(taxRateInput.value) || 0;
+                const dividableBoxOffice = parseFloat(document.getElementById('dividable-box-office').value) || 0;
+                const movieCost = parseFloat(document.getElementById('movie-cost').value) || 0;
+                const clientInvestment = parseFloat(document.getElementById('client-investment').value) || 0;
+                const taxRate = parseFloat(document.getElementById('movie-tax-rate').value) || 0;
                 
                 // 获取单位转换因子
-                const dividableUnit = parseFloat(dividableUnitSelect.value);
-                const costUnit = parseFloat(costUnitSelect.value);
-                const investmentUnit = parseFloat(investmentUnitSelect.value);
+                const dividableUnit = parseFloat(document.getElementById('dividable-unit').value);
+                const costUnit = parseFloat(document.getElementById('cost-unit').value);
+                const investmentUnit = parseFloat(document.getElementById('investment-unit').value);
                 
                 // 验证输入
                 if (dividableBoxOffice <= 0) {
@@ -1101,70 +1455,287 @@
                 // 计算投资回报率
                 const roi = clientInvestmentYuan > 0 ? (clientAfterTaxYuan / clientInvestmentYuan) * 100 : 0;
                 
-                // 计算单个客户净利润（用于饼图）
-                // 这是单个客户的税前利润，在饼图中展示
-                const singleClientProfitYuan = clientFinalYuan;
+                // 获取当前显示单位
+                const displayUnitOption = document.querySelector('#movie-calculator .unit-option.active');
+                const displayUnit = displayUnitOption ? parseFloat(displayUnitOption.dataset.unit) : 1;
+                const displayUnitText = displayUnitOption ? 
+                    (displayUnit === 1 ? '元' : displayUnit === 10000 ? '万' : '亿') : '元';
                 
-                // 更新结果
-                updateResults({
-                    producerProfitYuan,
-                    netProfitYuan,
-                    clientProfitYuan,
-                    companyProfitYuan,
-                    clientRatio,
-                    clientFinalYuan,
-                    clientAfterTaxYuan,
-                    breakEvenBoxOfficeYuan,
-                    movieCostYuan,
-                    roi,
-                    singleClientProfitYuan
-                });
+                // 更新结果项
+                const resultItems = document.querySelectorAll('#movie-results-grid .result-item');
+                
+                resultItems[0].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(producerProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[1].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(netProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[2].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[3].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(companyProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[4].querySelector('.result-value').innerHTML = 
+                    `${(clientRatio * 100).toFixed(2)}<span class="result-unit">%</span>`;
+                resultItems[5].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientFinalYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[6].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientAfterTaxYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[7].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(breakEvenBoxOfficeYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                
+                // 更新关键数据
+                document.getElementById('movie-key-client-ratio').innerHTML = 
+                    `${(clientRatio * 100).toFixed(2)}<span class="key-stat-unit">%</span>`;
+                document.getElementById('movie-key-client-profit').innerHTML = 
+                    `${formatNumber(clientProfitYuan, displayUnit)}<span class="key-stat-unit">${displayUnitText}</span>`;
+                document.getElementById('movie-key-single-client-profit').innerHTML = 
+                    `${formatNumber(clientAfterTaxYuan, displayUnit)}<span class="key-stat-unit">${displayUnitText}</span>`;
+                document.getElementById('movie-key-roi').innerHTML = 
+                    `${roi.toFixed(2)}<span class="key-stat-unit">%</span>`;
+                
+                // 更新图表
+                updateMovieChart(
+                    producerProfitYuan, 
+                    movieCostYuan, 
+                    companyProfitYuan, 
+                    clientProfitYuan, 
+                    clientAfterTaxYuan
+                );
             }
             
-            // 为显示单位选项添加事件监听
-            unitOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const unitValue = parseInt(this.dataset.unit);
-                    const unitText = this.textContent;
-                    setDisplayUnit(unitValue, unitText);
-                });
-            });
-            
-            // 计算按钮点击事件
-            calculateBtn.addEventListener('click', function() {
-                calculateProfit();
-            });
-            
-            // 重置按钮点击事件
-            resetBtn.addEventListener('click', function() {
-                dividableBoxOfficeInput.value = '';
-                movieCostInput.value = '';
-                clientInvestmentInput.value = '';
-                taxRateInput.value = '6';
+            // 更新电影图表
+            function updateMovieChart(producerProfitYuan, movieCostYuan, companyProfitYuan, clientProfitYuan, singleClientProfitYuan) {
+                // 更新图表数据
+                window.movieProfitChart.data.datasets[0].data = [
+                    producerProfitYuan,
+                    movieCostYuan,
+                    companyProfitYuan,
+                    clientProfitYuan,
+                    singleClientProfitYuan
+                ];
                 
-                // 重置结果显示
-                initializeResults();
+                // 更新图表
+                window.movieProfitChart.update();
+                
+                // 更新图例
+                updateMovieChartLegend([
+                    producerProfitYuan,
+                    movieCostYuan,
+                    companyProfitYuan,
+                    clientProfitYuan,
+                    singleClientProfitYuan
+                ]);
+            }
+            
+            // 演唱会计算逻辑
+            document.getElementById('concert-calculate-btn').addEventListener('click', function() {
+                calculateConcertProfit();
             });
             
-            // 示例数据按钮点击事件
-            exampleBtn.addEventListener('click', function() {
-                // 使用《孤注一掷》的示例数据
-                dividableBoxOfficeInput.value = '352000';
-                movieCostInput.value = '15000';
-                clientInvestmentInput.value = '500';
-                taxRateInput.value = '6';
+            function calculateConcertProfit() {
+                // 获取输入值
+                const ticketQuantity = parseFloat(document.getElementById('ticket-quantity').value) || 0;
+                const ticketPrice = parseFloat(document.getElementById('ticket-price').value) || 0;
+                const concertCost = parseFloat(document.getElementById('concert-cost').value) || 0;
+                const clientInvestment = parseFloat(document.getElementById('concert-investment').value) || 0;
+                const taxRate = parseFloat(document.getElementById('concert-tax-rate').value) || 0;
+                
+                // 获取单位转换因子
+                const ticketUnit = parseFloat(document.getElementById('ticket-unit').value);
+                const priceUnit = parseFloat(document.getElementById('price-unit').value);
+                const costUnit = parseFloat(document.getElementById('concert-cost-unit').value);
+                const investmentUnit = parseFloat(document.getElementById('concert-investment-unit').value);
+                
+                // 验证输入
+                if (ticketQuantity <= 0) {
+                    alert('请输入有效的售票数量！');
+                    return;
+                }
+                
+                if (ticketPrice <= 0) {
+                    alert('请输入有效的平均票价！');
+                    return;
+                }
+                
+                if (concertCost <= 0) {
+                    alert('演唱会总成本必须大于0！');
+                    return;
+                }
+                
+                if (clientInvestment < 0) {
+                    alert('客户投资额不能为负数！');
+                    return;
+                }
+                
+                if (taxRate < 0 || taxRate > 100) {
+                    alert('税率必须在0-100%之间！');
+                    return;
+                }
+                
+                // 转换为元
+                const ticketQuantityYuan = ticketQuantity * ticketUnit;
+                const ticketPriceYuan = ticketPrice * priceUnit;
+                const concertCostYuan = concertCost * costUnit;
+                const clientInvestmentYuan = clientInvestment * investmentUnit;
+                
+                // 计算总票房收入
+                const totalRevenueYuan = ticketQuantityYuan * ticketPriceYuan;
+                
+                // 计算总利润
+                const totalProfitYuan = totalRevenueYuan - concertCostYuan;
+                
+                // 计算分配利润
+                const clientProfitYuan = totalProfitYuan > 0 ? totalProfitYuan * 0.8 : 0;
+                const companyProfitYuan = totalProfitYuan > 0 ? totalProfitYuan * 0.2 : 0;
+                
+                // 计算客户分成比例
+                const clientRatio = concertCostYuan > 0 ? clientProfitYuan / concertCostYuan : 0;
+                
+                // 计算单个客户税前所得
+                const clientFinalYuan = clientRatio * clientInvestmentYuan;
+                
+                // 计算单个客户税后所得
+                const clientAfterTaxYuan = clientFinalYuan * (1 - taxRate / 100);
+                
+                // 计算投资回报率
+                const roi = clientInvestmentYuan > 0 ? (clientAfterTaxYuan / clientInvestmentYuan) * 100 : 0;
+                
+                // 获取当前显示单位
+                const displayUnitOption = document.querySelector('#concert-calculator .unit-option.active');
+                const displayUnit = displayUnitOption ? parseFloat(displayUnitOption.dataset.unit) : 1;
+                const displayUnitText = displayUnitOption ? 
+                    (displayUnit === 1 ? '元' : displayUnit === 10000 ? '万' : '亿') : '元';
+                
+                // 更新结果项
+                const resultItems = document.querySelectorAll('#concert-results-grid .result-item');
+                
+                resultItems[0].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(totalRevenueYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[1].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(totalProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[2].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[3].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(companyProfitYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[4].querySelector('.result-value').innerHTML = 
+                    `${(clientRatio * 100).toFixed(2)}<span class="result-unit">%</span>`;
+                resultItems[5].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientFinalYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[6].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(clientAfterTaxYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                resultItems[7].querySelector('.result-value').innerHTML = 
+                    `${formatNumber(concertCostYuan, displayUnit)}<span class="result-unit">${displayUnitText}</span>`;
+                
+                // 更新关键数据
+                document.getElementById('concert-key-client-ratio').innerHTML = 
+                    `${(clientRatio * 100).toFixed(2)}<span class="key-stat-unit">%</span>`;
+                document.getElementById('concert-key-client-profit').innerHTML = 
+                    `${formatNumber(clientProfitYuan, displayUnit)}<span class="key-stat-unit">${displayUnitText}</span>`;
+                document.getElementById('concert-key-single-client-profit').innerHTML = 
+                    `${formatNumber(clientAfterTaxYuan, displayUnit)}<span class="key-stat-unit">${displayUnitText}</span>`;
+                document.getElementById('concert-key-roi').innerHTML = 
+                    `${roi.toFixed(2)}<span class="key-stat-unit">%</span>`;
+                
+                // 更新图表
+                updateConcertChart(
+                    totalRevenueYuan, 
+                    concertCostYuan, 
+                    companyProfitYuan, 
+                    clientProfitYuan, 
+                    clientAfterTaxYuan
+                );
+            }
+            
+            // 更新演唱会图表
+            function updateConcertChart(totalRevenueYuan, concertCostYuan, companyProfitYuan, clientProfitYuan, singleClientProfitYuan) {
+                // 更新图表数据
+                window.concertProfitChart.data.datasets[0].data = [
+                    totalRevenueYuan,
+                    concertCostYuan,
+                    companyProfitYuan,
+                    clientProfitYuan,
+                    singleClientProfitYuan
+                ];
+                
+                // 更新图表
+                window.concertProfitChart.update();
+                
+                // 更新图例
+                updateConcertChartLegend([
+                    totalRevenueYuan,
+                    concertCostYuan,
+                    companyProfitYuan,
+                    clientProfitYuan,
+                    singleClientProfitYuan
+                ]);
+            }
+            
+            // 重置按钮事件
+            document.getElementById('movie-reset-btn').addEventListener('click', function() {
+                document.getElementById('dividable-box-office').value = '';
+                document.getElementById('movie-cost').value = '';
+                document.getElementById('client-investment').value = '';
+                document.getElementById('movie-tax-rate').value = '6';
+                initializeMovieResults();
+            });
+            
+            document.getElementById('concert-reset-btn').addEventListener('click', function() {
+                document.getElementById('ticket-quantity').value = '';
+                document.getElementById('ticket-price').value = '';
+                document.getElementById('concert-cost').value = '';
+                document.getElementById('concert-investment').value = '';
+                document.getElementById('concert-tax-rate').value = '6';
+                initializeConcertResults();
+            });
+            
+            // 示例数据按钮事件
+            document.getElementById('movie-example-btn').addEventListener('click', function() {
+                document.getElementById('dividable-box-office').value = '352000';
+                document.getElementById('movie-cost').value = '15000';
+                document.getElementById('client-investment').value = '500';
+                document.getElementById('movie-tax-rate').value = '6';
                 
                 // 设置单位
-                dividableUnitSelect.value = '10000';
-                costUnitSelect.value = '10000';
-                investmentUnitSelect.value = '10000';
+                document.getElementById('dividable-unit').value = '10000';
+                document.getElementById('cost-unit').value = '10000';
+                document.getElementById('investment-unit').value = '10000';
                 
-                // 计算并显示结果
-                calculateProfit();
+                calculateMovieProfit();
+            });
+            
+            document.getElementById('concert-example-btn').addEventListener('click', function() {
+                document.getElementById('ticket-quantity').value = '50000';
+                document.getElementById('ticket-price').value = '500';
+                document.getElementById('concert-cost').value = '8000';
+                document.getElementById('concert-investment').value = '50';
+                document.getElementById('concert-tax-rate').value = '6';
+                
+                // 设置单位
+                document.getElementById('ticket-unit').value = '1';
+                document.getElementById('price-unit').value = '1';
+                document.getElementById('concert-cost-unit').value = '10000';
+                document.getElementById('concert-investment-unit').value = '10000';
+                
+                calculateConcertProfit();
+            });
+            
+            // 显示单位选择事件
+            document.querySelectorAll('.unit-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const container = this.closest('.calculator-card');
+                    container.querySelectorAll('.unit-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 重新计算
+                    if (container.id === 'movie-calculator') {
+                        calculateMovieProfit();
+                    } else if (container.id === 'concert-calculator') {
+                        calculateConcertProfit();
+                    }
+                });
             });
             
             // 初始化
-            initializeResults();
+            initializeMovieResults();
+            initializeConcertResults();
             setCopyrightText();
         });
     </script>
